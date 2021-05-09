@@ -1,0 +1,104 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Booking.Edit.Command
+@{
+    ViewBag.Title = "Edit Booking";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/bookings">Bookings</a></li>
+    <li class="breadcrumb-item active">Edit</li>
+</ol>
+
+<h4>Edit Booking</h4>
+
+<form method="post" asp-antiforgery="true">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row p-25">
+        <div class="col-12 col-sm-8 col-md-6">
+
+            <div class="form-group row">
+                <label for="BookingDate" class="col-sm-4 col-form-label">Booking Date</label>
+                <div class="col-sm-8 col-form-text">@Model.BookingDate</div>
+            </div>
+
+            <div class="form-group row">
+                <label for="BookingDate" class="col-sm-4 col-form-label">Booking Number</label>
+                <div class="col-sm-8 col-form-text">@Model.BookingNumber</div>
+            </div>
+
+            <div class="form-group row">
+                <label for="BookingDate" class="col-sm-4 col-form-label">Traveler</label>
+                <div class="col-sm-8 col-form-text">@Model.Traveler</div>
+            </div>
+
+            <div class="form-group row">
+                <label for="FlightId" class="col-sm-4 col-form-label">Flight</label>
+                <div class="col-sm-8">
+                    <select asp-for="FlightId" asp-items="Lookup.FlightItems" class="form-control"></select>
+                    <span asp-validation-for="FlightId"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="SeatId" class="col-sm-4 col-form-label">Seat</label>
+                <div class="col-sm-8">
+                    <select asp-for="SeatId" class="form-control"></select>
+                    <span asp-validation-for="SeatId"></span>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">&nbsp;</label>
+                <div class="col-sm-8 pt-15">
+                    <button id="save" class="btn btn-light btn-sm" type="submit">&nbsp; Save &nbsp;</button>&nbsp;&nbsp;
+                    <a class="btn btn-light btn-sm" href="javascript:history.back();">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<input type="hidden" id="original-seatid" value="@Model.SeatId" />
+
+@section Scripts
+    {
+    <script>
+        $(function () {
+
+            $('#FlightId').on('change', function () {
+                $("#SeatId").empty();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/bookings/seats',
+                    dataType: 'json',
+                    data: { id: $(this).val(), seatid: $('#original-seatid').val() },
+
+                    success: function (seats) {
+
+                        $.each(seats, function (i, seat) {
+                            $("#SeatId").append('<option value="' + seat.value + '">' +
+                                seat.text + '</option>');
+                        });
+                    },
+
+                    error: function (ex) {
+                        alert('Failed to retrieve seats.' + ex);
+                    }
+                });
+                return false;
+            });
+
+            // When page opens force a change event
+
+            $('#FlightId').trigger('change');
+
+            setTimeout(function () {
+                $('#SeatId').val($('#original-seatid').val());
+            }, 400);
+        });
+    </script>
+}
+

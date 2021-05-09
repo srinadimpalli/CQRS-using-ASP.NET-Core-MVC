@@ -1,0 +1,11 @@
+How to reverse engineer the database with EF Scaffolding.
+
+1) Ensure these Nuget Packages are included: 
+    Microsoft.EntityFrameworkCore.SqlServer
+    Microsoft.EntityFrameworkCore.Tools
+
+2) Run following command in the Package Manager Console (when using a SQL Server database).
+    Scaffold-DbContext "Server=(local);Database=CQRS;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Domain -force
+
+3) Clean up CQRSContext
+    Remove OnConfiguring, OnModelCreating, and OnModelCreatingPartial methods.

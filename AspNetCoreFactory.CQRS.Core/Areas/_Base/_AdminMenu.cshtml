@@ -1,0 +1,10 @@
+﻿
+<div class="admin-menu py-30">
+    <ul class="nav">
+        <li class='nav-item'><a class='nav-link @(ViewBag.AdminMenu == "Overview" ? "active" : "") pl-5' href="/admin">OVERVIEW</a></li>
+        <li class='nav-item'><a class='nav-link @(ViewBag.AdminMenu == "Planes" ? "active" : "")' href="/admin/planes">PLANES</a></li>
+        <li class='nav-item'><a class='nav-link @(ViewBag.AdminMenu == "Seats" ? "active" : "")' href="/admin/seats">SEATS</a></li>
+        <li class='nav-item'><a class='nav-link @(ViewBag.AdminMenu == "Events" ? "active" : "")' href="/admin/events">EVENTS</a></li>
+        <li class='nav-item'><a class='nav-link @(ViewBag.AdminMenu == "Maintain" ? "active" : "")' href="/admin/maintain">MAINTAIN</a></li>
+    </ul>
+</div>

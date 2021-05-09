@@ -1,0 +1,53 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Admin.List.Result
+@{
+    ViewBag.Title = "Admin";
+}
+
+<partial name="_AdminMenu" />
+
+<h4>Admin</h4>
+
+<table class="table table-list table-sm table-hover w-40 mt-20" >
+    <tr>
+        <th>Record counts by table</th>
+        <th class="text-center">Count</th>
+    </tr>
+    <tr>
+        <td><a class="table-list-link" href="/admin/planes">Planes</a></td>
+        <td class="text-center">
+            <a class='btn btn-xs btn-light' href="/admin/planes">@Model.TotalPlanes</a>
+        </td>
+    </tr>
+    <tr>
+        <td><a class="table-list-link" href="/admin/seats">Seats</a></td>
+        <td class="text-center">
+            <a class='btn btn-xs btn-light' href="/admin/seats">@Model.TotalSeats</a>
+        </td>
+    </tr>
+    <tr>
+        <td><a class="table-list-link" href="/travelers">Travelers</a></td>
+        <td class="text-center">
+            <a class='btn btn-xs btn-light' href="/travelers">@Model.TotalTravelers</a>
+        </td>
+    </tr>
+    <tr>
+        <td><a class="table-list-link" href="/flights">Flights</a></td>
+        <td class="text-center">
+            <a class='btn btn-xs btn-light' href="/flights">@Model.TotalFlights</a>
+        </td>
+    </tr>
+    <tr>
+        <td><a class="table-list-link" href="/bookings">Bookings</a></td>
+        <td class="text-center">
+            <a class='btn btn-xs btn-light' href="/bookings">@Model.TotalBookings</a>
+        </td>
+    </tr>
+    <tr>
+        <td><a class="table-list-link" href="/admin/events">Events</a></td>
+        <td class="text-center">
+            <a class='btn btn-xs btn-light' href="/admin/events">@Model.TotalEvents</a>
+        </td>
+    </tr>
+</table>
+
+<div class="height-60"></div>

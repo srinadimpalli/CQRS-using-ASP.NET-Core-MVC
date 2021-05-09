@@ -1,0 +1,65 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Traveler.List.Result
+@{
+    ViewBag.Title = "Travelers";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">Travelers</li>
+</ol>
+
+<h4>Travelers</h4>
+
+<div class="row pt-14">
+    <div class="col-12 mb-40">
+
+        <table class="table table-hover table-list table-sm">
+            <tr>
+                <th class="table-list-actions no-hover">
+                    <a class="btn btn-xs btn-light" href="/travelers/edit">New Traveler</a>
+                </th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Country</th>
+                <th class="text-center">Bookings</th>
+                <th>&nbsp;</th>
+            </tr>
+
+            @if (Model.Travelers.Count() == 0)
+            {
+                <tr><td colspan="7"><div class="no-items">No items to display</div></td></tr>
+            }
+
+            @foreach (var traveler in Model.Travelers)
+            {
+                <tr>
+                    <td>
+                        <form asp-antiforgery="true" method="post" action="/travelers/delete">
+                            <input type="hidden" asp-for="@traveler.Id" name="Id" />
+                            <a class='btn btn-xs btn-light' href="/travelers/edit/@traveler.Id">Edit</a>&nbsp;
+                            <button type="submit" class='btn btn-xs btn-light @(traveler.TotalBookings > 0 ? "disabled" : "")'>Delete</button>
+                        </form>
+                    </td>
+                    <td><a class="table-list-link" href="/travelers/@traveler.Id">@traveler.Name</a></td>
+                    <td>@traveler.Email</td>
+                    <td>@traveler.City</td>
+                    <td>@traveler.Country</td>
+                    <td class="text-center">
+                        @if (traveler.TotalBookings > 0)
+                        {
+                            <a class="btn btn-xs btn-light" href="/bookings?travelerid=@traveler.Id">@traveler.TotalBookings</a>
+                        }
+                        else
+                        {
+                            @traveler.TotalBookings
+                        }
+
+                    </td>
+                    <td><a class="table-list-link" href="/bookings/edit?travelerId=@traveler.Id">Add Booking</a></td>
+                </tr>
+            }
+        </table>
+
+    </div>
+</div>

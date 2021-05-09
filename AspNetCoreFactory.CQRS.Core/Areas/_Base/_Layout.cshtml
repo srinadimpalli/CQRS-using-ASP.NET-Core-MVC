@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title - CQRS and Event Sourcing</title>
+    <meta name="keywords" content="@ViewBag.Keywords">
+    <meta name="description" content="@ViewBag.Description">
+
+    <link rel="icon" href="/favicon.ico">
+
+    <partial name="_Css" />
+
+</head>
+<body>
+
+    <partial name="_Header" />
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <partial name="_Footer" />
+
+    <partial name="_Js" />
+
+    @await RenderSectionAsync("scripts", required: false)
+
+</body>
+</html>

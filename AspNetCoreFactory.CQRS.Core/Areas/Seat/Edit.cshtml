@@ -1,0 +1,50 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Seat.Edit.Command
+@{
+    var title = Model.Id == 0 ? "New Seat" : "Edit Seat";
+    ViewBag.Title = title;
+}
+
+<partial name="_AdminMenu" />
+
+<h4>@title</h4>
+
+<div class="row p-25">
+    <div class="col-12 col-sm-6">
+        <form method="post" asp-antiforgery="true">
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TotalBookings" />
+
+            <div class="form-group row">
+                <label for="PlaneId" class="col-sm-4 col-form-label">Plane</label>
+                <div class="col-sm-8">
+                    <select asp-for="PlaneId" asp-items="Lookup.PlaneItems" class="form-control"></select>
+                    <span asp-validation-for="PlaneId"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="Number" class="col-sm-4 col-form-label">Number</label>
+                <div class="col-sm-8">
+                    <input type="text" asp-for="Number" class="form-control" />
+                    <span asp-validation-for="Number"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="Location" class="col-sm-4 col-form-label">Location</label>
+                <div class="col-sm-8">
+                    <select asp-for="Location" asp-items="Lookup.LocationItems" class="form-control"></select>
+                    <span asp-validation-for="Location"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">&nbsp;</label>
+                <div class="col-sm-8 pt-15">
+                    <button id="save" class="btn btn-light btn-sm" type="submit">&nbsp; Save &nbsp;</button>&nbsp;&nbsp;
+                    <a class="btn btn-light btn-sm" href="javascript:history.back();">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

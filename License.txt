@@ -1,0 +1,18 @@
+==========================================================
+LICENSE AND WARRANTY
+----------------------------------------------------------
+
+You are free to use the source code in your own business 
+applications. However, you are not allowed to use the 
+source code to develop 'framework-type' products, such as
+libraries, frameworks, platforms, templates, meta-software, 
+and/or code-generators -- either commercial or open-source.
+
+THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT 
+WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF 
+MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+------------------------------------------------------
+Copyright (C), Srinadimpalli.com, LLC
+All rights reserved. www.srinadimpalli.com

@@ -1,0 +1,20 @@
+﻿
+<header>CQRS Reference App - Using ASP.NET Core MVC</header>
+
+<div class="main-menu">
+    <div class="container d-flex">
+        <div>
+            <ul class="nav">
+                <li class='nav-item'><a class='nav-link @(ViewBag.Menu == "Welcome" ? "active" : "")' href="/">Welcome</a></li>
+                <li class='nav-item'><a class='nav-link @(ViewBag.Menu == "Travelers" ? "active" : "")' href="/travelers">Travelers</a></li>
+                <li class='nav-item'><a class='nav-link @(ViewBag.Menu == "Flights" ? "active" : "")' href="/flights">Flights</a></li>
+                <li class='nav-item'><a class='nav-link @(ViewBag.Menu == "Bookings" ? "active" : "")' href="/bookings">Bookings</a></li>
+            </ul>
+        </div>
+        <div class="ml-auto">
+            <ul class="nav">
+                <li class='nav-item'><a class='nav-link @(ViewBag.Menu == "Admin" ? "active" : "")' href="/admin">Admin</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

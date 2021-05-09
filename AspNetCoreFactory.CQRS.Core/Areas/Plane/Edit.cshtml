@@ -1,0 +1,53 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Plane.Edit.Command
+@{
+    var title = Model.Id == 0 ? "New Plane" : "Edit Plane";
+    ViewBag.Title = title;
+}
+
+<partial name="_AdminMenu" />
+
+<h4>@title</h4>
+
+<div class="row pt-20 pb-80">
+    <div class="col-12 col-sm-6 pl-30">
+
+        <form method="post" asp-antiforgery="true">
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TotalSeats" />
+
+            <div class="form-group row">
+                <label for="Name" class="col-sm-4 col-form-label">Name</label>
+                <div class="col-sm-8">
+                    <input type="text" asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="Model" class="col-sm-4 col-form-label">Model</label>
+                <div class="col-sm-8">
+                    <input type="text" asp-for="Model" class="form-control" />
+                    <span asp-validation-for="Model"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="SerialNumber" class="col-sm-4 col-form-label">Serial Number</label>
+                <div class="col-sm-8">
+                    <input type="text" asp-for="SerialNumber" class="form-control" />
+                    <span asp-validation-for="SerialNumber"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label">&nbsp;</label>
+                <div class="col-sm-8 pt-15">
+                    <button id="save" class="btn btn-light btn-sm" type="submit">&nbsp; Save &nbsp;</button>&nbsp;&nbsp;
+                    <a class="btn btn-light btn-sm" href="javascript:history.back();">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+

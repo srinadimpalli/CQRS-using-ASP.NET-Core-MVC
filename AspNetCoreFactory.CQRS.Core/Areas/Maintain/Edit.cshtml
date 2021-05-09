@@ -1,0 +1,16 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Maintain.Edit.Command
+@{
+    ViewBag.Title = "Maintain";
+}
+
+<partial name="_AdminMenu" />
+
+<h4>Maintain</h4>
+
+<div class="p-20 pb-150">
+    <form method="post" asp-antiforgery="true">
+        <input type="submit" class="btn btn-sm btn-light" value="Start">&nbsp;&nbsp;
+        Recalculate Roll-up summary fields in Database<br /><br />
+        <span class="text-danger">@Model.Message</span>
+    </form>
+</div>

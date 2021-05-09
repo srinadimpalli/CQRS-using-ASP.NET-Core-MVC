@@ -1,0 +1,551 @@
+/*==============================================================*/
+/* Data model and Data for the 'CQRS' database                  */
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('Booking') and o.name = 'FK_BOOKING_REFERENCE_SEAT')
+alter table Booking
+   drop constraint FK_BOOKING_REFERENCE_SEAT
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('Booking') and o.name = 'FK_BOOKING_REFERENCE_FLIGHT')
+alter table Booking
+   drop constraint FK_BOOKING_REFERENCE_FLIGHT
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('Booking') and o.name = 'FK_BOOKING_REFERENCE_TRAVELER')
+alter table Booking
+   drop constraint FK_BOOKING_REFERENCE_TRAVELER
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('Flight') and o.name = 'FK_FLIGHT_REFERENCE_PLANE')
+alter table Flight
+   drop constraint FK_FLIGHT_REFERENCE_PLANE
+go
+
+if exists (select 1
+   from sys.sysreferences r join sys.sysobjects o on (o.id = r.constid and o.type = 'F')
+   where r.fkeyid = object_id('Seat') and o.name = 'FK_SEAT_REFERENCE_PLANE')
+alter table Seat
+   drop constraint FK_SEAT_REFERENCE_PLANE
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Booking')
+            and   name  = 'IndexBookingFlightId'
+            and   indid > 0
+            and   indid < 255)
+   drop index Booking.IndexBookingFlightId
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Booking')
+            and   name  = 'IndexBookingTravelerId'
+            and   indid > 0
+            and   indid < 255)
+   drop index Booking.IndexBookingTravelerId
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('Booking')
+            and   type = 'U')
+   drop table Booking
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Event')
+            and   name  = 'IndexEventTransaction'
+            and   indid > 0
+            and   indid < 255)
+   drop index Event.IndexEventTransaction
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Event')
+            and   name  = 'IndexEventTableTableId'
+            and   indid > 0
+            and   indid < 255)
+   drop index Event.IndexEventTableTableId
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Event')
+            and   name  = 'IndexEventTableEventDate'
+            and   indid > 0
+            and   indid < 255)
+   drop index Event.IndexEventTableEventDate
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Event')
+            and   name  = 'IndexEventEventDateTable'
+            and   indid > 0
+            and   indid < 255)
+   drop index Event.IndexEventEventDateTable
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('Event')
+            and   type = 'U')
+   drop table Event
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Flight')
+            and   name  = 'IndexFlightFlightNumber'
+            and   indid > 0
+            and   indid < 255)
+   drop index Flight.IndexFlightFlightNumber
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Flight')
+            and   name  = 'IndexFlightFromTo'
+            and   indid > 0
+            and   indid < 255)
+   drop index Flight.IndexFlightFromTo
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Flight')
+            and   name  = 'IndexFlightPlaneId'
+            and   indid > 0
+            and   indid < 255)
+   drop index Flight.IndexFlightPlaneId
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('Flight')
+            and   type = 'U')
+   drop table Flight
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Plane')
+            and   name  = 'IndexPlaneModel'
+            and   indid > 0
+            and   indid < 255)
+   drop index Plane.IndexPlaneModel
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('Plane')
+            and   type = 'U')
+   drop table Plane
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Seat')
+            and   name  = 'IndexSeatPlaneIdNumber'
+            and   indid > 0
+            and   indid < 255)
+   drop index Seat.IndexSeatPlaneIdNumber
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('Seat')
+            and   type = 'U')
+   drop table Seat
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Traveler')
+            and   name  = 'IndexTravelerEmail'
+            and   indid > 0
+            and   indid < 255)
+   drop index Traveler.IndexTravelerEmail
+go
+
+if exists (select 1
+            from  sysindexes
+           where  id    = object_id('Traveler')
+            and   name  = 'IndexTravelerLastName'
+            and   indid > 0
+            and   indid < 255)
+   drop index Traveler.IndexTravelerLastName
+go
+
+if exists (select 1
+            from  sysobjects
+           where  id = object_id('Traveler')
+            and   type = 'U')
+   drop table Traveler
+go
+
+/*==============================================================*/
+/* Table: Booking                                               */
+/*==============================================================*/
+create table Booking (
+   Id                   int                  identity,
+   FlightId             int                  not null,
+   SeatId               int                  not null,
+   TravelerId           int                  not null,
+   BookingDate          datetime2            not null default getutcdate(),
+   BookingNumber        nvarchar(20)         not null,
+   constraint PK_BOOKING primary key (Id)
+)
+go
+
+/*==============================================================*/
+/* Index: IndexBookingTravelerId                                */
+/*==============================================================*/
+create index IndexBookingTravelerId on Booking (
+TravelerId ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexBookingFlightId                                  */
+/*==============================================================*/
+create index IndexBookingFlightId on Booking (
+FlightId ASC
+)
+go
+
+/*==============================================================*/
+/* Table: Event                                                 */
+/*==============================================================*/
+create table Event (
+   Id                   int                  identity,
+   "Transaction"        nvarchar(40)         not null,
+   EventDate            datetime2            not null default getutcdate(),
+   Action               nvarchar(15)         not null,
+   "Table"              nvarchar(20)         not null,
+   TableId              int                  not null,
+   Version              int                  not null default 1,
+   Content              nvarchar(max)        not null,
+   constraint PK_EVENT primary key (Id)
+)
+go
+
+/*==============================================================*/
+/* Index: IndexEventEventDateTable                              */
+/*==============================================================*/
+create index IndexEventEventDateTable on Event (
+EventDate ASC,
+"Table" ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexEventTableEventDate                              */
+/*==============================================================*/
+create index IndexEventTableEventDate on Event (
+"Table" ASC,
+EventDate ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexEventTableTableId                                */
+/*==============================================================*/
+create index IndexEventTableTableId on Event (
+"Table" ASC,
+TableId ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexEventTransaction                                 */
+/*==============================================================*/
+create index IndexEventTransaction on Event (
+"Transaction" ASC
+)
+go
+
+/*==============================================================*/
+/* Table: Flight                                                */
+/*==============================================================*/
+create table Flight (
+   Id                   int                  identity,
+   PlaneId              int                  not null,
+   FlightNumber         nvarchar(10)         not null,
+   "From"               nvarchar(30)         not null,
+   "To"                 nvarchar(30)         not null,
+   Departure            datetime2            not null,
+   Arrival              datetime2            not null,
+   TotalBookings        int                  not null default 0,
+   constraint PK_FLIGHT primary key (Id)
+)
+go
+
+/*==============================================================*/
+/* Index: IndexFlightPlaneId                                    */
+/*==============================================================*/
+create index IndexFlightPlaneId on Flight (
+PlaneId ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexFlightFromTo                                     */
+/*==============================================================*/
+create index IndexFlightFromTo on Flight (
+"From" ASC,
+"To" ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexFlightFlightNumber                               */
+/*==============================================================*/
+create index IndexFlightFlightNumber on Flight (
+FlightNumber ASC
+)
+go
+
+/*==============================================================*/
+/* Table: Plane                                                 */
+/*==============================================================*/
+create table Plane (
+   Id                   int                  identity,
+   Name                 nvarchar(50)         not null,
+   Model                nvarchar(40)         not null,
+   SerialNumber         nvarchar(40)         not null,
+   TotalSeats           int                  not null default 0,
+   constraint PK_PLANE primary key (Id)
+)
+go
+
+/*==============================================================*/
+/* Index: IndexPlaneModel                                       */
+/*==============================================================*/
+create index IndexPlaneModel on Plane (
+Model ASC
+)
+go
+
+/*==============================================================*/
+/* Table: Seat                                                  */
+/*==============================================================*/
+create table Seat (
+   Id                   int                  identity,
+   PlaneId              int                  not null,
+   Number               nvarchar(10)         not null,
+   Location             nvarchar(10)         not null,
+   TotalBookings        int                  not null default 0,
+   constraint PK_SEAT primary key (Id)
+)
+go
+
+/*==============================================================*/
+/* Index: IndexSeatPlaneIdNumber                                */
+/*==============================================================*/
+create index IndexSeatPlaneIdNumber on Seat (
+PlaneId ASC,
+Number ASC
+)
+go
+
+/*==============================================================*/
+/* Table: Traveler                                              */
+/*==============================================================*/
+create table Traveler (
+   Id                   int                  identity,
+   FirstName            nvarchar(40)         not null,
+   LastName             nvarchar(40)         not null,
+   Email                nvarchar(50)         not null,
+   City                 nvarchar(40)         not null,
+   Country              nvarchar(40)         not null,
+   TotalBookings        int                  not null default 0,
+   constraint PK_TRAVELER primary key (Id)
+)
+go
+
+/*==============================================================*/
+/* Index: IndexTravelerLastName                                 */
+/*==============================================================*/
+create index IndexTravelerLastName on Traveler (
+LastName ASC
+)
+go
+
+/*==============================================================*/
+/* Index: IndexTravelerEmail                                    */
+/*==============================================================*/
+create index IndexTravelerEmail on Traveler (
+Email ASC
+)
+go
+
+alter table Booking
+   add constraint FK_BOOKING_REFERENCE_SEAT foreign key (SeatId)
+      references Seat (Id)
+go
+
+alter table Booking
+   add constraint FK_BOOKING_REFERENCE_FLIGHT foreign key (FlightId)
+      references Flight (Id)
+go
+
+alter table Booking
+   add constraint FK_BOOKING_REFERENCE_TRAVELER foreign key (TravelerId)
+      references Traveler (Id)
+go
+
+alter table Flight
+   add constraint FK_FLIGHT_REFERENCE_PLANE foreign key (PlaneId)
+      references Plane (Id)
+go
+
+alter table Seat
+   add constraint FK_SEAT_REFERENCE_PLANE foreign key (PlaneId)
+      references Plane (Id)
+go
+
+/*==============================================================*/
+/* Inserts 'CQRS' Data into database                            */
+/*==============================================================*/
+
+SET IDENTITY_INSERT [Traveler] ON
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(2,'Henry','Perez','henry@perez.com','San Antonio','USA',3)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(3,'Joe','Paxton','joe@paxton','Atlanta','USA',2)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(4,'Julia','MdDermott','julia88@gmail.com','New York','USA',0)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(5,'Kees','Kan','kees@kan.nl','Amsterdam','Netherlands',1)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(6,'Cynthia','Lopez','cynthia@lopez.com.ar','Buenos Aires','Argentina',1)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(7,'Michael','King','michael@king.com','Seattle','USA',0)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(8,'Ian','DeJong','paul@dejong.co.uk','Manchester','UK',0)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(9,'Kevin','Curtis','kevin@curtis.com','Miami','USA',0)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(10,'Nella','Kim','nella@kimco.com','Madrid','Spain',1)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(11,'Hendrik','Karlsson','hendrik@karlsson.se','Stockholm','Sweden',0)
+INSERT INTO [Traveler] ([Id],[FirstName],[LastName],[Email],[City],[Country],[TotalBookings])VALUES(12,'Toben','Vanderbilt','toben@vanderbilt.com','Boston','USA',0)
+SET IDENTITY_INSERT [Traveler] OFF
+
+SET IDENTITY_INSERT [Plane] ON
+INSERT INTO [Plane] ([Id],[Name],[Model],[SerialNumber],[TotalSeats])VALUES(2,'Texas Skies','Boeing 767','U3982F359G9JAUUV',36)
+INSERT INTO [Plane] ([Id],[Name],[Model],[SerialNumber],[TotalSeats])VALUES(5,'Virginia Skies','Boeing 757','UH32NNI87300PQ3',36)
+SET IDENTITY_INSERT [Plane] OFF
+
+
+SET IDENTITY_INSERT [Seat] ON
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(2,2,'Window','1A',1)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(3,2,'Window','2A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(4,2,'Window','3A',1)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(6,2,'Window','4A',1)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(7,2,'Window','5A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(8,2,'Window','6A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(9,2,'Window','7A',2)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(10,2,'Window','8A',1)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(11,2,'Window','9A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(13,2,'Isle','1B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(14,2,'Isle','2B',1)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(15,2,'Isle','3B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(16,2,'Isle','4B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(17,2,'Isle','5B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(18,2,'Isle','6B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(19,2,'Isle','7B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(20,2,'Isle','8B',1)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(21,2,'Isle','9B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(23,2,'Isle','1C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(24,2,'Isle','2C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(25,2,'Isle','3C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(26,2,'Isle','4C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(27,2,'Isle','5C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(28,2,'Isle','6C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(29,2,'Isle','7C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(30,2,'Isle','8C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(31,2,'Isle','9C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(33,2,'Window','1D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(34,2,'Window','2D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(35,2,'Window','3D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(36,2,'Window','4D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(37,2,'Window','5D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(38,2,'Window','6D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(39,2,'Window','7D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(40,2,'Window','8D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(41,2,'Window','9D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(83,5,'Window','1A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(84,5,'Isle','3C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(85,5,'Isle','4C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(86,5,'Isle','5C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(87,5,'Isle','6C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(88,5,'Isle','7C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(89,5,'Isle','8C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(90,5,'Isle','9C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(91,5,'Isle','2C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(93,5,'Window','2D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(94,5,'Window','3D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(95,5,'Window','4D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(96,5,'Window','5D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(97,5,'Window','6D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(98,5,'Window','7D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(99,5,'Window','8D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(100,5,'Window','1D',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(101,5,'Isle','1C',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(103,5,'Isle','9B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(104,5,'Window','2A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(105,5,'Window','3A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(106,5,'Window','4A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(107,5,'Window','5A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(108,5,'Window','6A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(109,5,'Window','7A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(110,5,'Window','8A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(111,5,'Window','9A',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(113,5,'Isle','1B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(114,5,'Isle','2B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(115,5,'Isle','3B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(116,5,'Isle','4B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(117,5,'Isle','5B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(118,5,'Isle','6B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(119,5,'Isle','7B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(120,5,'Isle','8B',0)
+INSERT INTO [Seat] ([Id],[PlaneId],[Location],[Number],[TotalBookings])VALUES(121,5,'Window','9D',0)
+SET IDENTITY_INSERT [Seat] OFF
+
+
+SET IDENTITY_INSERT [Flight] ON
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(2,2,'AA 213','Amsterdam','New York','2017-03-30 06:31:00.0000000','2017-03-30 08:24:00.0000000',5)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(3,5,'AA 402','London','Los Angeles','2017-04-02 10:32:00.0000000','2017-04-02 17:32:00.0000000',1)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(4,2,'UL 27','Houston','Miami','2017-04-10 09:01:00.0000000','2017-04-10 12:10:00.0000000',0)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(5,2,'AA 1034','Boston','Chicago','2017-04-30 09:15:00.0000000','2017-04-30 12:52:00.0000000',0)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(6,2,'AA 100','Buenos Aires','Miami','2017-05-06 21:03:00.0000000','2017-05-07 06:13:00.0000000',0)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(7,2,'UL 344','Hong Kong','Los Angeles','2017-09-11 21:03:00.0000000','2017-09-12 15:03:00.0000000',1)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(8,5,'AA 299','Bangalore','Portland','2017-09-19 13:04:00.0000000','2017-09-20 07:04:00.0000000',0)
+INSERT INTO [Flight] ([Id],[PlaneId],[FlightNumber],[From],[To],[Departure],[Arrival],[TotalBookings])VALUES(9,2,'UL 1400','Sydney','San Francisco','2017-11-12 09:05:00.0000000','2017-11-13 11:25:00.0000000',1)
+SET IDENTITY_INSERT [Flight] OFF
+
+
+SET IDENTITY_INSERT [Booking] ON
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(1,2,9,2,'2017-03-08 17:16:16.6330000','KVDT8M')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(2,2,4,2,'2017-03-08 17:18:38.3800000','KUC3W0')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(3,2,2,2,'2017-03-08 17:18:50.7230000','S3APA1')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(5,3,9,3,'2017-03-09 04:19:38.9430000','W8GXHS')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(6,2,6,6,'2017-03-09 16:20:25.8430000','J7W22Y')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(7,7,14,3,'2017-03-09 17:14:53.9800000','8P2KCK')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(8,2,20,5,'2017-03-09 17:17:57.6670000','NPKQ7S')
+INSERT INTO [Booking] ([Id],[FlightId],[SeatId],[TravelerId],[BookingDate],[BookingNumber])VALUES(9,9,10,10,'2017-03-09 17:26:21.3400000','UKWLXR')
+SET IDENTITY_INSERT [Booking] OFF
+
+
+SET IDENTITY_INSERT [Event] ON
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(2,'17baf166-7751-4db3-bf8d-51679fd0a4bf','2017-03-08 19:00:49.2270000','Delete','Booking',4,1,'{Id : 4}')
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(3,'f6d32d5a-de96-45bc-8cd6-ecba1ca5dd8c','2017-03-09 16:20:36.6000000','Delete','Booking',3,1,'{Id : 3}')
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(4,'5a33832c-c707-4a36-ba52-85770e5d817b','2017-03-09 16:59:09.0000000','Update','Booking',1,1,'{SeatId : 8}')
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(5,'72edfb0d-addd-4acf-a59c-1ef8cb53c3b4','2017-03-09 17:13:57.3730000','Update','Booking',1,1,'{SeatId : 9}')
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(6,'931972eb-ab28-4ce4-bf70-4955a2ba1d12','2017-03-09 17:17:57.7500000','Insert','Booking',8,1,'{"Id":8,"FlightId":2,"SeatId":20,"TravelerId":5,"BookingDate":"2017-03-09T17:17:57.667","BookingNumber":"NPKQ7S","Flight":null,"Seat":null,"Traveler":null}')
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(7,'04456667-9881-404b-8e40-9853f6feb1f1','2017-03-09 17:26:21.4400000','Insert','Booking',9,1,'{"Id":9,"FlightId":9,"SeatId":9,"TravelerId":10,"BookingDate":"2017-03-09T17:26:21.34","BookingNumber":"UKWLXR"}')
+INSERT INTO [Event] ([Id],[Transaction],[EventDate],[Action],[Table],[TableId],[Version],[Content])VALUES(8,'7f079008-9d92-4a89-b27d-947cdde9b2ec','2017-03-09 17:27:00.2570000','Update','Booking',9,1,'{SeatId : 10}')
+SET IDENTITY_INSERT [Event] OFF

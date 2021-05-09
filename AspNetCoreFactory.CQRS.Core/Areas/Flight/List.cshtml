@@ -1,0 +1,70 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Flight.List.Result
+@{
+    ViewBag.Title = "Flights";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">Flights</li>
+</ol>
+
+<h4>Flights</h4>
+
+<div class="row pt-14">
+    <div class="col-12 mb-40">
+
+        <table class="table table-hover table-list table-sm">
+            <tr>
+                <th class="table-list-actions no-hover">
+                    <a class="btn btn-xs btn-light" href="/flights/edit">New Flight</a>
+                </th>
+                <th>Number</th>
+                <th>Plane</th>
+                <th>From</th>
+                <th>Thru</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th class="text-center">Bookings</th>
+                <th>&nbsp;</th>
+            </tr>
+
+            @if (Model.Flights.Count() == 0)
+            {
+                <tr><td colspan="9"><div class="no-items">No items to display</div></td></tr>
+            }
+
+            @foreach (var flight in Model.Flights)
+            {
+                <tr>
+                    <td>
+                        <form asp-antiforgery="true" method="post" action="/flights/delete">
+                            <input type="hidden" asp-for="@flight.Id" name="Id" />
+                            <a class='btn btn-xs btn-light' href="/flights/edit/@flight.Id">Edit</a>&nbsp;
+                            <button type="submit" class='btn btn-xs btn-light @(flight.TotalBookings > 0 ? "disabled" : "")'>Delete</button>
+                        </form>
+                    </td>
+                    <td><a class="table-list-link" href="/flights/@flight.Id">@flight.FlightNumber</a></td>
+                    <td>@flight.Plane</td>
+                    <td>@flight.From</td>
+                    <td>@flight.To</td>
+                    <td>@flight.Departure</td>
+                    <td>@flight.Arrival</td>
+                    <td class="text-center">
+                        @if (flight.TotalBookings > 0)
+                        {
+                            <a class="btn btn-xs btn-light" href="/bookings?flightid=@flight.Id">@flight.TotalBookings</a>
+                        }
+                        else
+                        {
+                            @flight.TotalBookings
+                        }
+
+                    </td>
+                    <td><a class="table-list-link" href="/bookings/edit?flightId=@flight.Id">Add Booking</a></td>
+                </tr>
+            }
+        </table>
+
+    </div>
+</div>
+

@@ -1,0 +1,37 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Event.List.Result
+@{
+    ViewBag.Title = "Events";
+}
+
+<partial name="_AdminMenu" />
+
+<h4>Events &nbsp;&nbsp;<span class="font-14 font-weight-normal">Bookings only</span></h4>
+
+<table class="table table-list table-sm table-hover mt-20">
+    <tr>
+
+        <th class="width-160">Date</th>
+        <th>Action</th>
+        <th>Table</th>
+        <th>Id</th>
+        <th>Content</th>
+    </tr>
+
+    @if (Model.Events.Count() == 0)
+    {
+        <tr><td colspan="5"><div class="no-items">No items to display</div></td></tr>
+    }
+
+    @foreach (var evt in Model.Events)
+    {
+        <tr>
+            <td>@evt.EventDate</td>
+            <td>@evt.Action</td>
+            <td>@evt.Table</td>
+            <td>@evt.TableId</td>
+            <td>@evt.Content</td>
+        </tr>
+    }
+</table>
+
+<div class="height-50"></div>

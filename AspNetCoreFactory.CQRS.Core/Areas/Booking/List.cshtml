@@ -1,0 +1,94 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Booking.List.Result
+@{
+    ViewBag.Title = "Bookings";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active">Bookings</li>
+</ol>
+
+<h4>Bookings</h4>
+
+<form>
+
+    <div class="row bg-light border rounded mt-15 pt-15 pl-15 pr-15 pb-5" >
+        <div class="col-4">
+            <div class="form-group row">
+                <label for="TravelerId" class="col-sm-4 col-form-label text-right">Traveler</label>
+                <div class="col-sm-8 ">
+                    <select asp-for="TravelerId" asp-items="Lookup.TravelerItems" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="form-group row">
+                <label for="FlightId" class="col-sm-3 col-form-label text-right">Flight</label>
+                <div class="col-sm-9 ">
+                    <select asp-for="FlightId" asp-items="Lookup.FlightItems" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <div class="pt-3">
+                        <button id="Filter" class="btn btn-light btn-sm" type="submit">&nbsp;&nbsp; Filter &nbsp;&nbsp;</button>&nbsp;&nbsp;
+                        <a href="/bookings" class="btn btn-light btn-sm">&nbsp; Reset &nbsp;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<div class="row pt-25">
+    <div class="col-12 mb-40">
+
+        <table class="table table-hover table-list table-sm">
+            <tr>
+                <th class="table-list-actions no-hover">
+                    <a class="btn btn-xs btn-light" href="/bookings/edit">New Booking</a>
+                </th>
+                <th>Number</th>
+                <th>Booked On</th>
+                <th>Traveler</th>
+                <th>Flight</th>
+                <th>From</th>
+                <th>Thru</th>
+                <th>Date</th>
+                <th>Seat</th>
+                <th>&nbsp;</th>
+            </tr>
+
+            @if (Model.Bookings.Count() == 0)
+            {
+                <tr><td colspan="9"><div class="no-items">No items to display</div></td></tr>
+            }
+
+            @foreach (var booking in Model.Bookings)
+            {
+                <tr>
+                    <td>
+                        <form asp-antiforgery="true" method="post" action="/bookings/delete">
+                            <input type="hidden" asp-for="@booking.Id" name="Id" />
+                            <a class='btn btn-xs btn-light' href="/bookings/edit/@booking.Id">Change</a>&nbsp;
+                            <button type="submit" class='btn btn-xs btn-light'>Delete</button>&nbsp;
+                        </form>
+                    </td>
+                    <td>@booking.BookingNumber</td>
+                    <td>@booking.BookingDate</td>
+                    <td><a class="table-list-link" href="/travelers/@booking.TravelerId">@booking.Traveler</a></td>
+                    <td><a class="table-list-link" href="/flights/@booking.FlightId">@booking.Flight</a></td>
+
+                    <td>@booking.From</td>
+                    <td>@booking.To</td>
+                    <td>@booking.Date</td>
+                    <td>@booking.Seat</td>
+                </tr>
+            }
+        </table>
+
+    </div>
+</div>

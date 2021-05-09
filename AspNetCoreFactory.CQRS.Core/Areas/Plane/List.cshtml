@@ -1,0 +1,56 @@
+﻿@model AspNetCoreFactory.CQRS.Core.Areas.Plane.List.Result
+@{
+    ViewBag.Title = "Planes";
+}
+
+<partial name="_AdminMenu" />
+
+<h4>Planes</h4>
+
+<table class="table table-list table-sm table-hover mt-20">
+    <tr>
+        <th class="table-list-actions no-hover">
+            <a class="btn btn-xs btn-light" href="/admin/planes/edit">New Plane</a>
+        </th>
+        <th>Name</th>
+        <th>Model</th>
+        <th>Serial Number</th>
+        <th class="text-center">Seats</th>
+        <th>&nbsp;</th>
+    </tr>
+
+    @if (Model.Planes.Count() == 0)
+    {
+        <tr><td colspan="5"><div class="no-items">No items to display</div></td></tr>
+    }
+
+    @foreach (var plane in Model.Planes)
+    {
+        <tr>
+            <td>
+                <form asp-antiforgery="true" method="post" action="/admin/planes/delete">
+                    <input type="hidden" asp-for="@plane.Id" name="Id" />
+                    <a class='btn btn-xs btn-light' href="/admin/planes/edit/@plane.Id">Edit</a>&nbsp;
+                    <button type="submit" class='btn btn-xs btn-light @(plane.TotalSeats > 0 ? "disabled" : "")'>Delete</button>
+                </form>
+            </td>
+            <td>@plane.Name</td>
+            <td>@plane.Model</td>
+            <td>@plane.SerialNumber</td>
+            <td class="text-center">
+                @if (plane.TotalSeats > 0)
+                {
+                    <a class="btn btn-xs btn-light" href="/admin/seats?planeId=@plane.Id">@plane.TotalSeats</a>
+                }
+                else
+                {
+                    @plane.TotalSeats
+                }
+
+            </td>
+            <td><a class="table-list-link" href="/admin/seats/edit?planeId=@plane.Id">Add Seat</a></td>
+        </tr>
+    }
+</table>
+
+<div class="height-60"></div>
