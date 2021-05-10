@@ -10,7 +10,11 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
 {
     public class PlaneService : ServiceBase<Domain.Entities.Plane>, IPlaneService
     {
-        public PlaneService(CQRSContext cQRSContext) : base(cQRSContext) { }
+        private readonly CQRSContext _cQRSContext;
+        public PlaneService(CQRSContext cQRSContext) : base(cQRSContext)
+        {
+            _cQRSContext = cQRSContext;
+        }
         public void CreatePlane(Domain.Entities.Plane place)
         {
             Create(place);

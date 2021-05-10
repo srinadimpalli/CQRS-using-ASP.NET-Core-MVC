@@ -15,5 +15,11 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Event
             return FindAll(trackChanges).ToList().OrderBy(e => e.Id).ToList();
         }
         public int GetCount() => Count();
+
+        public void CreateEvent(Domain.Entities.Event evnt)
+        {
+            Create(evnt);
+        }
+
     }
 }

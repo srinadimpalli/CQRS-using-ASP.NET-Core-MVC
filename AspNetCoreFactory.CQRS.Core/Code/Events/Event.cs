@@ -1,5 +1,6 @@
 ﻿using System;
 using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using Newtonsoft.Json;
 
 namespace AspNetCoreFactory.CQRS.Core
@@ -18,12 +19,11 @@ namespace AspNetCoreFactory.CQRS.Core
     public class Event : IEvent
     {
         #region Dependency Injection 
+        private readonly IServiceManager _serviceManager;
 
-        private readonly CQRSContext _db;
-
-        public Event(CQRSContext db)
+        public Event(IServiceManager serviceManager)
         {
-            _db = db;
+            _serviceManager = serviceManager;
         }
 
         #endregion
@@ -37,11 +37,10 @@ namespace AspNetCoreFactory.CQRS.Core
                 Table = "Booking",
                 TableId = booking.Id,
                 Content = JsonConvert.SerializeObject(booking),
-                EventDate = DateTime.UtcNow
+                EventDate = DateTime.Now
             };
-
-            _db.Event.Add(evt);
-            _db.SaveChanges();
+            _serviceManager.Event.CreateEvent(evt);
+            _serviceManager.Save();
         }
 
         public void UpdateBooking(Booking oldBooking, Booking newBooking)
@@ -59,9 +58,8 @@ namespace AspNetCoreFactory.CQRS.Core
                 Content = JsonConvert.SerializeObject(newBooking),
                 EventDate = DateTime.UtcNow
             };
-
-            _db.Event.Add(evt);
-            _db.SaveChanges();
+            _serviceManager.Event.CreateEvent(evt);
+            _serviceManager.Save();
         }
 
         public void DeleteBooking(Booking booking)
@@ -75,9 +73,8 @@ namespace AspNetCoreFactory.CQRS.Core
                 Content = $"{{Id : {booking.Id}}}",
                 EventDate = DateTime.UtcNow
             };
-
-            _db.Event.Add(evt);
-            _db.SaveChanges();
+            _serviceManager.Event.CreateEvent(evt);
+            _serviceManager.Save();
         }
     }
 }

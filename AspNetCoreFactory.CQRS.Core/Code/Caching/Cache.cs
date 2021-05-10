@@ -41,14 +41,12 @@ namespace AspNetCoreFactory.CQRS.Core
     {
         #region Dependency Injection
         private readonly IServiceManager _serviceManager;
-        private readonly CQRSContext _db;
         private readonly IMemoryCache _memoryCache;
 
-        public Cache(IMemoryCache memoryCache, CQRSContext db, IServiceManager serviceManager)
+        public Cache(IMemoryCache memoryCache, IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
             _memoryCache = memoryCache;
-            _db = db;
 
             EagerLoad();
         }
@@ -108,7 +106,7 @@ namespace AspNetCoreFactory.CQRS.Core
                 {
                     lock (locker)
                     {
-                        dictionary = _db.Plane.ToDictionary(a => a.Id);
+                        dictionary = _serviceManager.Plane.GetPlanes(trackChanges: false).ToDictionary(p => p.Id);
                         Add(PlanesKey, dictionary, DateTime.Now.AddHours(24));
                     }
                 }
@@ -136,7 +134,7 @@ namespace AspNetCoreFactory.CQRS.Core
                 {
                     lock (locker)
                     {
-                        dictionary = _db.Seat.ToDictionary(a => a.Id);
+                        dictionary = _serviceManager.Seat.GetSeats(trackChanges: false).ToDictionary(s => s.Id);
                         Add(SeatsKey, dictionary, DateTime.Now.AddHours(24));
                     }
                 }
@@ -187,7 +185,7 @@ namespace AspNetCoreFactory.CQRS.Core
                 {
                     lock (locker)
                     {
-                        dictionary = _db.Traveler.ToDictionary(a => a.Id);
+                        dictionary = _serviceManager.Traveler.GetTravelers(trackChanges: false).ToDictionary(t => t.Id);
                         Add(TravelersKey, dictionary, DateTime.Now.AddHours(4));
                     }
                 }
@@ -238,7 +236,7 @@ namespace AspNetCoreFactory.CQRS.Core
                 {
                     lock (locker)
                     {
-                        dictionary = _db.Flight.ToDictionary(a => a.Id);
+                        dictionary = _serviceManager.Flight.GetFlights(trackChanges: false).ToDictionary(f => f.Id);
                         Add(FlightsKey, dictionary, DateTime.Now.AddHours(4));
                     }
                 }

@@ -9,5 +9,6 @@ namespace AspNetCoreFactory.Domain.Services
     {
         IEnumerable<Event> GetEvents(bool trackChanges);
         int GetCount();
+        void CreateEvent(Event evnt);
     }
 }
