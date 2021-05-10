@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;// .CQRS.Core.Domain;
+using AspNetCoreFactory.Domain.Services;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -39,12 +40,13 @@ namespace AspNetCoreFactory.CQRS.Core
     public class Cache : ICache
     {
         #region Dependency Injection
-
+        private readonly IServiceManager _serviceManager;
         private readonly CQRSContext _db;
         private readonly IMemoryCache _memoryCache;
 
-        public Cache(IMemoryCache memoryCache, CQRSContext db)
+        public Cache(IMemoryCache memoryCache, CQRSContext db, IServiceManager serviceManager)
         {
+            _serviceManager = serviceManager;
             _memoryCache = memoryCache;
             _db = db;
 

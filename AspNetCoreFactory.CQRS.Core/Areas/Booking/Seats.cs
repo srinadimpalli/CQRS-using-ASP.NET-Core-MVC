@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
@@ -23,24 +24,26 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
 
         public class Handler : RequestHandler<Query, Result>
         {
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public Handler(CQRSContext db, ICache cache)
+            public Handler(IServiceManager serviceManager, ICache cache)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
             protected override Result Handle(Query query)
             {
                 var result = new Result();
-
-                var flight = _cache.Flights[query.Id];
-                var plane = _cache.Planes[flight.PlaneId];
+                if (query.Id > 0)
+                {
+                    var flight = _cache.Flights[query.Id];
+                    var plane = _cache.Planes[flight.PlaneId];
+                }
                 var seats = _cache.Seats.Values;
-
-                var bookings = _db.Booking.Where(b => b.FlightId == query.Id).Select(b => b.SeatId).ToList();
+                var bookingsQuery = _serviceManager.Booking.AsQueryable();
+                var bookings = bookingsQuery.Where(b => b.FlightId == query.Id).Select(b => b.SeatId).ToList();
 
                 foreach (var seat in seats)
                 {

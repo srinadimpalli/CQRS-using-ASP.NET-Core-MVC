@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 
 namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
@@ -19,15 +20,14 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
             private readonly IRollup _rollup;
             private readonly IEvent _event;
 
-            public CommandHandler(CQRSContext db, ICache cache, IRollup rollup, IEvent @event)
+            public CommandHandler(IServiceManager serviceManager, ICache cache, IRollup rollup, IEvent @event)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
                 _rollup = rollup;
                 _event = @event;
@@ -35,16 +35,15 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
 
             protected override void Handle(Command message)
             {
-                var booking = _db.Booking.Find(message.Id);
+                var booking = _serviceManager.Booking.GetBooking(message.Id, trackChanges: false);
 
                 // ** Event Sourcing pattern
 
                 _event.DeleteBooking(booking);
 
                 // Eventual consistency
-
-                _db.Booking.Remove(booking);
-                _db.SaveChanges();
+                _serviceManager.Booking.DeleteBooking(booking);
+                _serviceManager.Save();
 
                 _rollup.TotalBookings(booking);
             }

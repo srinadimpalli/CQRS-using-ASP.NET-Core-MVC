@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
 
         public class Query : IRequest<Command>
         {
-            public int? Id { get; set; }
+            public int Id { get; set; }
         }
 
         // Query Process
@@ -21,23 +22,22 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
         public class QueryHandler : RequestHandler<Query, Command>
         {
             // ** DI Pattern
+            private readonly IServiceManager _serviceManager;
 
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Command Handle(Query message)
             {
                 var command = new Command();
 
-                var plane = _db.Plane.SingleOrDefault(p => p.Id == message.Id);
+                var plane = _serviceManager.Plane.GetPlane(message.Id, trackChanges: false);
                 if (plane != null)
                 {
                     // ** Data Mapper pattern
-                
+
                     command.Id = plane.Id;
                     command.Name = plane.Name;
                     command.Model = plane.Model;
@@ -68,13 +68,12 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public CommandHandler(CQRSContext db, ICache cache)
+            public CommandHandler(IServiceManager serviceManager, ICache cache)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
@@ -84,26 +83,24 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
                 {
                     // ** Data Mapper Pattern
 
-                    var plane = new Domain.Plane();
+                    var plane = new Domain.Entities.Plane();
                     plane.Name = message.Name;
                     plane.Model = message.Model;
                     plane.SerialNumber = message.SerialNumber;
-
-                    _db.Plane.Add(plane);
+                    _serviceManager.Plane.CreatePlane(plane);
                 }
                 else // update plane
                 {
                     // ** Data Mapper Pattern
 
-                    var plane = _db.Plane.Find(message.Id);
+                    var plane = _serviceManager.Plane.GetPlane(message.Id, trackChanges: false);
                     plane.Name = message.Name;
                     plane.Model = message.Model;
                     plane.SerialNumber = message.SerialNumber;
-
-                    _db.Plane.Update(plane);
+                    _serviceManager.Plane.UpdatePlane(plane);
                 }
 
-                _db.SaveChanges();
+                _serviceManager.Save();
 
                 _cache.ClearPlanes();
             }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AspNetCoreFactory.CQRS.Core.Domain
+namespace AspNetCoreFactory.Domain.Entities
 {
     public partial class Traveler
     {

@@ -1,5 +1,8 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
 {
@@ -16,25 +19,23 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
 
         // Process
 
-        public class CommandHandler : RequestHandler<Command>
+        public class CommandHandler : AsyncRequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public CommandHandler(CQRSContext db, ICache cache)
+            public CommandHandler(ICache cache, IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
-            protected override void Handle(Command message)
+            protected override async Task Handle(Command message, CancellationToken cancellationToken)
             {
-                var traveler = _db.Traveler.Find(message.Id);
-
-                _db.Traveler.Remove(traveler);
-                _db.SaveChanges();
+                var traveler = await _serviceManager.Traveler.GetTravelerAsync(message.Id, trackChanges: false);
+                _serviceManager.Traveler.DeleteTraveler(traveler);
+                _serviceManager.Save();
 
                 _cache.DeleteTraveler(traveler);
             }

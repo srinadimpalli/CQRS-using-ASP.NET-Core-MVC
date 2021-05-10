@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -22,11 +23,10 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
 
         public class QueryHandler : RequestHandler<Query, Command>
         {
-            private readonly CQRSContext _db;
 
-            public QueryHandler(CQRSContext db)
+            public QueryHandler()
             {
-                _db = db;
+
             }
 
             protected override Command Handle(Query request)
@@ -52,14 +52,13 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly IRollup _rollup;
             private readonly IEvent _event;
 
-            public CommandHandler(CQRSContext db, IRollup rollup, IEvent @event)
+            public CommandHandler(IServiceManager serviceManager, IRollup rollup, IEvent @event)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _rollup = rollup;
                 _event = @event;
             }
@@ -68,15 +67,15 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
             {
                 // ** Data Mapper Pattern
 
-                var booking = new Domain.Booking();
+                var booking = new Domain.Entities.Booking();
                 booking.FlightId = message.FlightId;
                 booking.SeatId = message.SeatId;
                 booking.TravelerId = message.TravelerId;
                 booking.BookingNumber = BookingNumber.Next();
                 booking.BookingDate = DateTime.UtcNow;
 
-                _db.Booking.Add(booking);
-                _db.SaveChanges();
+                _serviceManager.Booking.CreateBooking(booking);
+                _serviceManager.Save();
 
                 // ** Event Sourcing Pattern
 

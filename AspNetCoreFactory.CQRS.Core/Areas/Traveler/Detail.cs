@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Linq;
 
@@ -12,7 +13,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
 
         public class Query : IRequest<Result>
         {
-            public int? Id { get; set; }
+            public int Id { get; set; }
         }
 
         // Output
@@ -34,18 +35,16 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            private readonly IServiceManager _serviceManager;
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Result Handle(Query query)
             {
                 var result = new Result();
-                var traveler = _db.Traveler.SingleOrDefault(p => p.Id == query.Id);
+                var traveler = _serviceManager.Traveler.GetTraveler(query.Id, trackChanges: false);
 
                 if (traveler != null)
                 {

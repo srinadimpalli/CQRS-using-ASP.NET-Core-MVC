@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,13 +22,12 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
         public class QueryHandler : RequestHandler<Query, Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public QueryHandler(CQRSContext db, ICache cache)
+            public QueryHandler(ICache cache, IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
@@ -35,7 +35,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
             {
                 var command = new Command();
 
-                var booking = _db.Booking.SingleOrDefault(p => p.Id == query.Id);
+                var booking = _serviceManager.Booking.GetBooking(query.Id, trackChanges: false);//  _db.Booking.SingleOrDefault(p => p.Id == query.Id);
 
                 // ** Data Mapping Pattern
 
@@ -70,33 +70,29 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly IRollup _rollup;
             private readonly IEvent _event;
 
-            public CommandHandler(CQRSContext db, IRollup rollup, IEvent @event)
+            public CommandHandler(IRollup rollup, IEvent @event, IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _rollup = rollup;
                 _event = @event;
             }
 
             protected override void Handle(Command message)
             {
-                var booking = _db.Booking.Find(message.Id);
-                var original = new Domain.Booking { SeatId = booking.SeatId, FlightId = booking.FlightId };
+                var booking = _serviceManager.Booking.GetBooking(message.Id, trackChanges: true); //   
+                var original = new Domain.Entities.Booking { SeatId = booking.SeatId, FlightId = booking.FlightId };
 
                 booking.FlightId = message.FlightId;
                 booking.SeatId = message.SeatId;
-
-                _db.Booking.Update(booking);
-                _db.SaveChanges();
+                _serviceManager.Booking.UpdateBooking(booking);
+                _serviceManager.Save();
 
                 // ** Event Sourcing Pattern
-
                 _event.UpdateBooking(original, booking);
-
                 // Update statistics
 
                 _rollup.TotalBookings(booking);

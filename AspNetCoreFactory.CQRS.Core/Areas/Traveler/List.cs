@@ -1,6 +1,8 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
 {
@@ -36,22 +38,19 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            private readonly IServiceManager _serviceManager;
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Result Handle(Query request)
             {
                 var result = new Result();
-
-                foreach (var traveler in _db.Traveler)
+                var travelers = _serviceManager.Traveler.GetTravelers(trackChanges: false);
+                foreach (var traveler in travelers)
                 {
                     // ** Data Mapper pattern
-
                     result.Travelers.Add(new Result.Traveler
                     {
                         Id = traveler.Id,

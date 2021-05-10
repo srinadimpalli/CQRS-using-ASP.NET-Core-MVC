@@ -1,4 +1,11 @@
-using AspNetCoreFactory.CQRS.Core.Domain;
+using AspNetCoreFactory.CQRS.Core.Areas.Booking;
+using AspNetCoreFactory.CQRS.Core.Areas.Event;
+using AspNetCoreFactory.CQRS.Core.Areas.Flight;
+using AspNetCoreFactory.CQRS.Core.Areas.Plane;
+using AspNetCoreFactory.CQRS.Core.Areas.Seat;
+using AspNetCoreFactory.CQRS.Core.Areas.Traveler;
+using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,11 +41,21 @@ namespace AspNetCoreFactory.CQRS.Core
 
             services.AddHttpContextAccessor();
 
+
+
             // Create connectionstring with root path location
             var connectionString = _config.GetConnectionString("CQRS")
                                           .Replace("{Path}", _env.ContentRootPath);
             services.AddDbContext<CQRSContext>(options =>
                                            options.UseSqlServer(connectionString));
+            // service manager
+            services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddScoped<ITravelerService, TravelService>();
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<ISeatService, SeatService>();
+            services.AddScoped<IPlaneService, PlaneService>();
+            services.AddScoped<IFlightService, FlightService>();
+            services.AddScoped<IEventService, EventService>();
 
             services.AddControllersWithViews(options =>
             {
@@ -77,7 +94,7 @@ namespace AspNetCoreFactory.CQRS.Core
                 endpoints.MapControllers();
             });
 
-            db.Database.ExecuteSqlRaw("SELECT 1"); // Warmup localdb for better users experience.
+
         }
     }
 }

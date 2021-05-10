@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,13 +52,11 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
-
-            public QueryHandler(CQRSContext db, ICache cache)
+            public QueryHandler(ICache cache, IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
@@ -65,7 +64,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Booking
             {
                 var result = new Result { TravelerId = query.TravelerId, FlightId = query.FlightId };
 
-                var bookings = _db.Booking.AsQueryable();
+                var bookings = _serviceManager.Booking.AsQueryable();
 
                 if (query.TravelerId != null)
                     bookings = bookings.Where(b => b.TravelerId == query.TravelerId);

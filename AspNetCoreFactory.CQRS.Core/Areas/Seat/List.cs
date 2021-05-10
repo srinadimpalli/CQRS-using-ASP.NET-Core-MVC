@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,20 +40,19 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public QueryHandler(CQRSContext db, ICache cache)
+            public QueryHandler(IServiceManager serviceManager, ICache cache)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
-            protected override Result Handle(Query query) 
+            protected override Result Handle(Query query)
             {
                 var result = new Result { PlaneId = query.PlaneId };
-                var seats = _db.Seat.AsQueryable(); 
+                var seats = _serviceManager.Seat.AsQueryable();
                 if (query.PlaneId != null)
                     seats = seats.Where(s => s.PlaneId == query.PlaneId);
 

@@ -1,8 +1,9 @@
 ﻿using System;
+using AspNetCoreFactory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace AspNetCoreFactory.CQRS.Core.Domain
+namespace AspNetCoreFactory.Domain.Entities
 {
     public partial class CQRSContext : DbContext
     {
@@ -13,7 +14,7 @@ namespace AspNetCoreFactory.CQRS.Core.Domain
         public virtual DbSet<Seat> Seat { get; set; }
         public virtual DbSet<Traveler> Traveler { get; set; }
 
-        public CQRSContext(){ }
+        public CQRSContext() { }
 
         public CQRSContext(DbContextOptions<CQRSContext> options) : base(options) { }
     }

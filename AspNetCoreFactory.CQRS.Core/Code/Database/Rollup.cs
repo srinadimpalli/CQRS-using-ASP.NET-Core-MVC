@@ -1,4 +1,4 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNetCoreFactory.CQRS.Core
@@ -29,7 +29,7 @@ namespace AspNetCoreFactory.CQRS.Core
 
         private readonly CQRSContext _db;
 
-        public Rollup(CQRSContext db){_db = db;}
+        public Rollup(CQRSContext db) { _db = db; }
 
         #endregion
 
@@ -59,7 +59,7 @@ namespace AspNetCoreFactory.CQRS.Core
                            SET TotalBookings = (SELECT COUNT(Id) FROM Booking WHERE FlightId = [Flight].Id);
                         UPDATE Traveler 
                            SET TotalBookings = (SELECT COUNT(Id) FROM Booking WHERE TravelerId = [Traveler].Id);";
-                        
+
             _db.Database.ExecuteSqlRaw(sql);
         }
 
@@ -103,7 +103,7 @@ namespace AspNetCoreFactory.CQRS.Core
                            SET TotalBookings = (SELECT COUNT(Id) FROM Booking WHERE SeatId = [Seat].Id)
                          WHERE Id = {seatId};";
 
-           _db.Database.ExecuteSqlRaw(sql);
+            _db.Database.ExecuteSqlRaw(sql);
         }
 
         #endregion

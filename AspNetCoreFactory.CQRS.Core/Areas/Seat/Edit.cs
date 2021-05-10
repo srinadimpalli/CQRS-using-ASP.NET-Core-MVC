@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
 
         public class Query : IRequest<Command>
         {
-            public int? Id { get; set; }
+            public int Id { get; set; }
             public int? PlaneId { get; set; }
         }
 
@@ -22,12 +23,10 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
         public class QueryHandler : RequestHandler<Query, Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            private readonly IServiceManager _serviceManager;
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Command Handle(Query message)
@@ -35,7 +34,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
                 var command = new Command();
                 if (message.PlaneId.HasValue) command.PlaneId = message.PlaneId.Value;
 
-                var seat = _db.Seat.SingleOrDefault(p => p.Id == message.Id);
+                var seat = _serviceManager.Seat.GetSeat(message.Id, trackChanges: false);
                 if (seat != null)
                 {
                     // ** Data Mapper Pattern
@@ -70,14 +69,13 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
             private readonly IRollup _rollup;
 
-            public CommandHandler(CQRSContext db, ICache cache, IRollup rollup)
+            public CommandHandler(IServiceManager serviceManager, ICache cache, IRollup rollup)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
                 _rollup = rollup;
             }
@@ -88,21 +86,20 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
                     InsertSeat(message);
                 else
                     UpdateSeat(message);
-                
+
             }
 
             private void InsertSeat(Command message)
             {
                 // ** Data Mapper pattern
 
-                var seat = new Domain.Seat();
+                var seat = new Domain.Entities.Seat();
                 seat.PlaneId = message.PlaneId;
                 seat.Number = message.Number;
                 seat.Location = message.Location;
                 seat.TotalBookings = message.TotalBookings;
-
-                _db.Seat.Add(seat);
-                _db.SaveChanges();
+                _serviceManager.Seat.CreateSeat(seat);
+                _serviceManager.Save();
 
                 _cache.AddSeat(seat);
                 _rollup.TotalSeatsByPlane(seat.PlaneId);
@@ -112,14 +109,13 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
             {
                 // ** Data Mapper Pattern
 
-                var seat = _db.Seat.Find(message.Id);
+                var seat = _serviceManager.Seat.GetSeat(message.Id, trackChanges: true);
                 seat.PlaneId = message.PlaneId;
                 seat.Number = message.Number;
                 seat.Location = message.Location;
                 seat.TotalBookings = message.TotalBookings;
-
-                _db.Seat.Update(seat);
-                _db.SaveChanges();
+                _serviceManager.Seat.UpdateSeat(seat);
+                _serviceManager.Save();
 
                 _cache.UpdateSeat(seat);
             }

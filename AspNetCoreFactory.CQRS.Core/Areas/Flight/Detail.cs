@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Linq;
 
@@ -35,13 +36,12 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public QueryHandler(CQRSContext db, ICache cache)
+            public QueryHandler(IServiceManager serviceManager, ICache cache)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
@@ -49,7 +49,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
             {
                 var result = new Result();
 
-                var flight = _db.Flight.SingleOrDefault(p => p.Id == query.Id);
+                var flight = _serviceManager.Flight.GetFlight(query.Id, trackChanges: false);
                 if (flight != null)
                 {
                     // ** Data Mapper Pattern

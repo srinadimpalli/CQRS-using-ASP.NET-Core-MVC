@@ -1,4 +1,4 @@
-﻿namespace AspNetCoreFactory.CQRS.Core.Domain
+﻿namespace AspNetCoreFactory.Domain.Entities
 {
     public partial class Booking
     {

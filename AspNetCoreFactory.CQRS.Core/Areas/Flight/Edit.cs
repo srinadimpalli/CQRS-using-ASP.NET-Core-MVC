@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
 
         public class Query : IRequest<Command>
         {
-            public int? Id { get; set; }
+            public int Id { get; set; }
         }
 
         // Query Process
@@ -22,19 +23,17 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
         public class QueryHandler : RequestHandler<Query, Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            private readonly IServiceManager _serviceManager;
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Command Handle(Query message)
             {
                 var command = new Command();
 
-                var flight = _db.Flight.SingleOrDefault(p => p.Id == message.Id);
+                var flight = _serviceManager.Flight.GetFlight(message.Id, trackChanges: false);
                 if (flight != null)
                 {
                     // ** Data Mapper Pattern
@@ -84,13 +83,12 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public CommandHandler(CQRSContext db, ICache cache)
+            public CommandHandler(IServiceManager serviceManager, ICache cache)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
@@ -106,7 +104,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
             {
                 // ** Data Mapper Pattern
 
-                var flight = new Domain.Flight
+                var flight = new Domain.Entities.Flight()
                 {
                     PlaneId = message.PlaneId,
                     FlightNumber = message.FlightNumber,
@@ -133,9 +131,8 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
                     flight.Arrival = flight.Arrival.AddMinutes(int.Parse(tokens[1]));
                 }
                 catch { /* noop */ }
-
-                _db.Flight.Add(flight);
-                _db.SaveChanges();
+                _serviceManager.Flight.CreateFlight(flight);
+                _serviceManager.Save();
 
                 _cache.AddFlight(flight);
             }
@@ -144,7 +141,7 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
             {
                 // ** Data Mapper Pattern
 
-                var flight = _db.Flight.Find(message.Id);
+                var flight = _serviceManager.Flight.GetFlight(message.Id, trackChanges: true);
 
                 flight.PlaneId = message.PlaneId;
                 flight.FlightNumber = message.FlightNumber;
@@ -170,10 +167,8 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Flight
                     flight.Arrival = flight.Arrival.AddMinutes(int.Parse(tokens[1]));
                 }
                 catch { /* noop */ }
-
-
-                _db.Flight.Update(flight);
-               _db.SaveChanges();
+                _serviceManager.Flight.UpdateFlight(flight);
+                _serviceManager.Save();
 
                 _cache.UpdateFlight(flight);
             }

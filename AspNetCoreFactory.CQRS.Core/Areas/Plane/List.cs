@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Collections.Generic;
 
@@ -33,19 +34,18 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
+            private readonly IServiceManager _serviceManager;
 
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Result Handle(Query query)
             {
                 var result = new Result();
 
-                var planes = _db.Plane;
+                var planes = _serviceManager.Plane.GetPlanes(trackChanges: false);
                 foreach (var plane in planes)
                 {
                     result.Planes.Add(new Result.Plane

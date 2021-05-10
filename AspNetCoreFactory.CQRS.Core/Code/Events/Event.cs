@@ -1,5 +1,5 @@
 ﻿using System;
-using AspNetCoreFactory.CQRS.Core.Domain;
+using AspNetCoreFactory.Domain.Entities;
 using Newtonsoft.Json;
 
 namespace AspNetCoreFactory.CQRS.Core
@@ -30,7 +30,7 @@ namespace AspNetCoreFactory.CQRS.Core
 
         public void InsertBooking(Booking booking)
         {
-            var evt = new Domain.Event
+            var evt = new Domain.Entities.Event
             {
                 Action = "Insert",
                 Transaction = Guid.NewGuid().ToString(),
@@ -50,7 +50,7 @@ namespace AspNetCoreFactory.CQRS.Core
             bool seatChanged = oldBooking.SeatId != newBooking.SeatId;
             if (!flightChanged && !seatChanged) return;
 
-            var evt = new Domain.Event
+            var evt = new Domain.Entities.Event
             {
                 Action = "Update",
                 Transaction = Guid.NewGuid().ToString(),
@@ -66,7 +66,7 @@ namespace AspNetCoreFactory.CQRS.Core
 
         public void DeleteBooking(Booking booking)
         {
-            var evt = new Domain.Event
+            var evt = new Domain.Entities.Event
             {
                 Action = "Delete",
                 Transaction = Guid.NewGuid().ToString(),

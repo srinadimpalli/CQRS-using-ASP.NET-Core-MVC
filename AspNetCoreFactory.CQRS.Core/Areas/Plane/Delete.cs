@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 
 namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
@@ -19,25 +20,23 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Plane
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
 
-            public CommandHandler(CQRSContext db, ICache cache)
+            public CommandHandler(IServiceManager serviceManager, ICache cache)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
             }
 
             protected override void Handle(Command message)
             {
-                var plane = _db.Plane.Find(message.Id);
-
-                _db.Plane.Remove(plane);
-                _db.SaveChanges();
+                var plane = _serviceManager.Plane.GetPlane(message.Id, trackChanges: true);
+                _serviceManager.Plane.DeletePlane(plane);
+                _serviceManager.Save();
 
                 _cache.ClearPlanes();
-                
+
             }
         }
     }

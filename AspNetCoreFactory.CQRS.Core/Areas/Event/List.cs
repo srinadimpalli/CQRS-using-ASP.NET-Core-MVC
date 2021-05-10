@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Collections.Generic;
 
@@ -36,18 +37,16 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Event
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            private readonly IServiceManager _serviceManager;
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Result Handle(Query query)
             {
                 var result = new Result();
-                var events = _db.Event;
+                var events = _serviceManager.Event.GetEvents(trackChanges: false);
 
                 foreach (var evt in events)
                 {

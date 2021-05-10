@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,19 +23,17 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
         public class QueryHandler : RequestHandler<Query, Command>
         {
             // DI Pattern
-
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            private readonly ITravelerService _travelerService;
+            public QueryHandler(ITravelerService travelerService)
             {
-                _db = db;
+                _travelerService = travelerService;
             }
 
             protected override Command Handle(Query message)
             {
                 var command = new Command();
 
-                var traveler = _db.Traveler.SingleOrDefault(p => p.Id == message.Id);
+                var traveler = _travelerService.GetTraveler(message.Id ?? 0, trackChanges: false);
 
                 if (traveler != null)
                 {
@@ -77,38 +76,41 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI pattern
+            private readonly IServiceManager _serviceManager;
 
             private readonly CQRSContext _db;
             private readonly ICache _cache;
 
-            public CommandHandler(CQRSContext db, ICache cache)
+            public CommandHandler(CQRSContext db, ICache cache, IServiceManager serviceManager)
             {
+                _serviceManager = serviceManager;
                 _db = db;
                 _cache = cache;
             }
 
             protected override void Handle(Command message)
             {
-                if (message.Id == 0) 
+                if (message.Id == 0)
                     InsertTraveler(message);
                 else
                     UpdateTraveler(message);
-                
+
             }
 
             private void InsertTraveler(Command message)
             {
                 // ** Data Mapper pattern
 
-                var traveler = new Domain.Traveler();
+                var traveler = new Domain.Entities.Traveler();
                 traveler.FirstName = message.FirstName;
                 traveler.LastName = message.LastName;
                 traveler.Email = message.Email;
                 traveler.City = message.City;
                 traveler.Country = message.Country;
-
-                _db.Traveler.Add(traveler);
-                _db.SaveChanges();
+                _serviceManager.Traveler.CreateTraveler(traveler);
+                //_db.Traveler.Add(traveler);
+                _serviceManager.Save();
+                //_db.SaveChanges();
 
                 _cache.AddTraveler(traveler);
             }
@@ -117,16 +119,17 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Traveler
             {
                 // ** Data Mapper pattern
 
-                var traveler = _db.Traveler.Find(message.Id);
+                var traveler = _serviceManager.Traveler.GetTraveler(message.Id, trackChanges: true);// _db.Traveler.Find(message.Id);
 
                 traveler.FirstName = message.FirstName;
                 traveler.LastName = message.LastName;
                 traveler.Email = message.Email;
                 traveler.City = message.City;
                 traveler.Country = message.Country;
-
-                _db.Traveler.Update(traveler);
-                _db.SaveChanges();
+                _serviceManager.Traveler.UpdateTraveler(traveler);
+                _serviceManager.SaveAsync();
+                //_db.Traveler.Update(traveler);
+                //_db.SaveChanges();
 
                 _cache.UpdateTraveler(traveler);
             }

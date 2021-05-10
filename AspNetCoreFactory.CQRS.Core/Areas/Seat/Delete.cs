@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 
 namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
@@ -19,28 +20,26 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Seat
         public class CommandHandler : RequestHandler<Command>
         {
             // ** DI Pattern
-
-            private readonly CQRSContext _db;
+            private readonly IServiceManager _serviceManager;
             private readonly ICache _cache;
             private readonly IRollup _rollup;
 
-            public CommandHandler(CQRSContext db, ICache cache, IRollup rollup)
+            public CommandHandler(IServiceManager serviceManager, ICache cache, IRollup rollup)
             {
-                _db = db;
+                _serviceManager = serviceManager;
                 _cache = cache;
                 _rollup = rollup;
             }
 
             protected override void Handle(Command message)
             {
-                var seat = _db.Seat.Find(message.Id);
-
-                _db.Seat.Remove(seat);
-                _db.SaveChanges();
+                var seat = _serviceManager.Seat.GetSeat(message.Id, trackChanges: true);
+                _serviceManager.Seat.DeleteSeat(seat);
+                _serviceManager.Save();
 
                 _cache.DeleteSeat(seat);
                 _rollup.TotalSeatsByPlane(seat.PlaneId);
-                
+
             }
         }
     }

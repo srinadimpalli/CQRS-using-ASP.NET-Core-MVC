@@ -1,4 +1,5 @@
-﻿using AspNetCoreFactory.CQRS.Core.Domain;
+﻿using AspNetCoreFactory.Domain.Entities;
+using AspNetCoreFactory.Domain.Services;
 using MediatR;
 using System.Linq;
 using System.Threading;
@@ -31,24 +32,23 @@ namespace AspNetCoreFactory.CQRS.Core.Areas.Admin
         public class QueryHandler : RequestHandler<Query, Result>
         {
             // ** DI Pattern
+            private readonly IServiceManager _serviceManager;
 
-            private readonly CQRSContext _db;
-
-            public QueryHandler(CQRSContext db)
+            public QueryHandler(IServiceManager serviceManager)
             {
-                _db = db;
+                _serviceManager = serviceManager;
             }
 
             protected override Result Handle(Query query)
             {
                 return new Result
                 {
-                    TotalPlanes = _db.Plane.Count(),
-                    TotalFlights = _db.Flight.Count(),
-                    TotalSeats = _db.Seat.Count(),
-                    TotalTravelers = _db.Traveler.Count(),
-                    TotalBookings = _db.Booking.Count(),
-                    TotalEvents = _db.Event.Count()
+                    TotalPlanes = _serviceManager.Plane.GetCount(),
+                    TotalFlights = _serviceManager.Flight.GetCount(),
+                    TotalSeats = _serviceManager.Seat.GetCount(),
+                    TotalTravelers = _serviceManager.Traveler.GetCount(),
+                    TotalBookings = _serviceManager.Booking.GetCount(),
+                    TotalEvents = _serviceManager.Event.GetCount()
                 };
             }
         }
