@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Live_Projects\Dofactory.CQRS.Core\Dofactory.CQRS.Core\bin\Release\netcoreapp3.1\publish\</_PublishTargetUrl>
+    <History>True|2021-05-07T18:18:56.3392066Z;True|2021-05-07T13:52:36.6055289-04:00;True|2021-05-07T13:22:58.3998252-04:00;True|2021-05-07T12:45:27.2452114-04:00;True|2021-05-07T12:41:39.8798315-04:00;</History>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="CQRS">
+      <Value>Data Source=SQL5074.site4now.net%3bInitial Catalog=DB_A55841_cqrs%3bUser Id=DB_A55841_cqrs_admin%3bPassword=Sairam%40152120%3b</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
+    <EFMigrations Include="AspNetCoreFactory.CQRS.Core.Domain.CQRSContext">
+      <Value>Data Source=SQL5074.site4now.net%3bInitial Catalog=DB_A55841_cqrs%3bUser Id=DB_A55841_cqrs_admin%3bPassword=Sairam%40152120%3b</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

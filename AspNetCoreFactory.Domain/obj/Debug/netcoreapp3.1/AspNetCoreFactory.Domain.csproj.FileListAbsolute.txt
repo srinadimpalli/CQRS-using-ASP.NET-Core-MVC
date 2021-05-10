@@ -1,0 +1,12 @@
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\bin\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.deps.json
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\bin\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.runtimeconfig.json
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\bin\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.runtimeconfig.dev.json
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\bin\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.dll
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\bin\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.pdb
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.csprojAssemblyReference.cache
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.AssemblyInfoInputs.cache
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.AssemblyInfo.cs
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.csproj.CoreCompileInputs.cache
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.dll
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.pdb
+C:\Live_Projects\AspNetCoreFactory.CQRS\AspNetCoreFactory.Domain\obj\Debug\netcoreapp3.1\AspNetCoreFactory.Domain.genruntimeconfig.cache
