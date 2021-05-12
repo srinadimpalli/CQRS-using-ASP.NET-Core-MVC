@@ -24,12 +24,24 @@ You can create database using Database First or Code First approach.
 
 ### Featurers:
 * Flat Areas: Flat areas have no subfolders like [Models, Controllers, Views]. All files in a module reside in the same folder.
+* Modified from https://github.com/OdeToCode/AddFeatureFolders
+```
+.AddRazorOptions(o =>
+            {
+                // Accommodates the '_Base' folder name
+
+                o.ViewLocationFormats.Clear();
+                o.ViewLocationFormats.Add(options.AreaPlaceholder + @"\{0}.cshtml");
+                o.ViewLocationFormats.Add(options.RootFolderName + @"\_Base\{0}.cshtml");
+                o.ViewLocationExpanders.Add(expander);
+            });
+```           
 * MediatR: MediatR separates messages into queries and commands.
-* Event Sourcing pattern: (partially implemented), look for Event table.
+* Event Sourcing pattern: (partially implemented), look for Event table.Event class logging Event Source records.
 * Record Name: Is a human-readable field that easily identifies a record.
 * Lookups: Lookups are table-driven dropdown [List and Edit pages].
 * Caching: in-memory data store, caching removes the need for table joins and simplifies data and increases performance.
-* Roll-ups: Introduces roll-up columns, retriving and displaying a list count with out a single table join[code/database/Rollup.cs]
+* Roll-ups: Rolup performs re-calculation of the rollup fields in the database[example: TotalBookings]. It does this by issuing raw SQL to the database.    code path [..code/database/Rollup.cs]
 
 ### Usage
 <p align="left">
