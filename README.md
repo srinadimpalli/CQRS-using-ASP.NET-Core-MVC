@@ -20,7 +20,7 @@ You can create database using Database First or Code First approach.
 ### Database first approach.
 * Copy the Sql database script from "CreateDB.txt" under the solution level and create a database named "CQRS" in your Sql Server instance and update the connection string with your sql server name.
 ### Code First
-Follow the instruction listed in "ReverseEngineerDb.txt" file.
+* Navigate to the AspNetCoreFactory.Domain directory and open the command prompt and follow the instruction listed in "ReverseEngineerDb.txt" file.
 
 ### Featurers:
 * Flat Areas: Flat areas have no subfolders like [Models, Controllers, Views]. All files in a module reside in the same folder.
