@@ -35,6 +35,10 @@ Follow the instruction listed in "ReverseEngineerDb.txt" file.
 <p align="left">
       <img src="https://github.com/srinadimpalli/CQRS-using-ASP.NET-Core-MVC/blob/master/AspNetCoreFactory.CQRS.Core/wwwroot/images/cqrs.jpg" alt="usage">
 </P
+</br>
+<p align="left">
+      <img src="https://github.com/srinadimpalli/CQRS-using-ASP.NET-Core-MVC/blob/master/AspNetCoreFactory.CQRS.Core/wwwroot/images/Modules_VSlice.PNG" alt="modules">
+</P
 
 ## Author
 
