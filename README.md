@@ -18,7 +18,7 @@ This is a CQRS reference application using ASP.NET Core MVC, MediatR, EF Core, S
 ### Database Configuration 
 You can create database using Database First or Code First approach.
 ### Database first approach.
-* Copy the Sql database scipt from "CreateDB.txt" and create a database named "CQRS" in your Sql Server instance and update the connection string with your sql server name.
+* Copy the Sql database script from "CreateDB.txt" under the solution level and create a database named "CQRS" in your Sql Server instance and update the connection string with your sql server name.
 ### Code First
 Follow the instruction listed in "ReverseEngineerDb.txt" file.
 
